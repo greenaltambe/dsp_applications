@@ -2,11 +2,11 @@ from pydub import AudioSegment
 import numpy as np
 from scipy.io import wavfile
 
-print("Converting MP3 to WAV...")
+# print("Converting MP3 to WAV...")
 
-mp3_file = AudioSegment.from_file("case1/audio.mp3", format="mp3")
+# mp3_file = AudioSegment.from_file("case1/audio.mp3", format="mp3")
 
-wav_file = mp3_file.export("case1/audio.wav", format="wav")
+# wav_file = mp3_file.export("case1/audio.wav", format="wav")
 
 print("Filtering...")
 sample_rate, samples = wavfile.read("case1/audio.wav")

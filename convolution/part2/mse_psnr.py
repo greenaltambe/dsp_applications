@@ -15,9 +15,15 @@ def calculate_mse_psnr(original_file, filtered_file):
     if sample_rate1 != sample_rate2:
         raise ValueError("Sampling rates do not match!")
     
-    # Convert signals to float for computation
-    original_signal = original_signal.astype(np.float32)
-    filtered_signal = filtered_signal.astype(np.float32)
+    # Convert stereo to mono if necessary
+    if len(original_signal.shape) > 1:
+        original_signal = np.mean(original_signal, axis=1)
+    if len(filtered_signal.shape) > 1:
+        filtered_signal = np.mean(filtered_signal, axis=1)
+
+    # Convert signals to float and normalize
+    original_signal = original_signal.astype(np.float32) / np.iinfo(np.int16).max
+    filtered_signal = filtered_signal.astype(np.float32) / np.iinfo(np.int16).max
     
     # Ensure both signals have the same length
     min_len = min(len(original_signal), len(filtered_signal))
@@ -28,18 +34,13 @@ def calculate_mse_psnr(original_file, filtered_file):
     mse = np.mean((original_signal - filtered_signal) ** 2)
     
     # Compute PSNR
-    max_val = np.max(original_signal)  # Maximum possible signal value
-    psnr = 10 * np.log10((max_val ** 2) / mse) if mse > 0 else float('inf')
+    max_val = 1.0  # Since signals are normalized
+    psnr = 10 * np.log10((max_val ** 2) / mse) if mse > 1e-10 else float('inf')
     
     return mse, psnr
 
-# Convert MP3 to WAV
-# mp3_audio = "case3/audio.mp3"
-# wav_audio = "case3/audio.wav"
-# convert_mp3_to_wav(mp3_audio, wav_audio)
-
 # Paths to input audio files
-original_audio = "case3/audio.wav"
+original_audio = "case3/noise_free.wav"
 filtered_audio = "case3/filtered_output.wav"
 
 # Compute MSE and PSNR
